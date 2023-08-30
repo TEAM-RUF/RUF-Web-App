@@ -6,7 +6,7 @@ import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'dart:math';
 import 'package:http/http.dart' as http;
-import 'dart:typed_data';
+import 'package:gymbot/video/video_screen.dart';
 
 // ignore: must_be_immutable
 class CameraApp extends StatelessWidget {
@@ -151,7 +151,7 @@ class _CameraViewState extends State<CameraView> {
   // Send Video
   // author : judemin
   bool recording = false;
-  String savedVidName = "N/A";
+  String savedVidName = "2023-08-30T19:30:48.886-852694.mp4";
   String serverUrl = "http://localhost:3030";
   String generateRandomToken() {
     final String currentDate = DateTime.now().toIso8601String();
@@ -255,6 +255,26 @@ class _CameraViewState extends State<CameraView> {
               icon: Icon(
                 recording ? Icons.stop : Icons.fiber_manual_record,
                 color: Colors.red, // Set the icon color
+              ),
+            ),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white, // Set the background color to white
+              shape: BoxShape.circle, // Make the container a circle
+            ),
+            child: IconButton(
+              onPressed: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          VideoScreen(filename: savedVidName)),
+                )
+              },
+              icon: Icon(
+                Icons.video_file,
+                color: Colors.blue, // Set the icon color
               ),
             ),
           )

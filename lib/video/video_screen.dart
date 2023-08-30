@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
-import 'package:http/http.dart' as http;
 
 class VideoScreen extends StatefulWidget {
-  final String videoUrl;
+  final String filename;
 
-  VideoScreen({required this.videoUrl});
+  VideoScreen({required this.filename});
 
   @override
   _VideoScreenState createState() => _VideoScreenState();
@@ -17,8 +16,9 @@ class _VideoScreenState extends State<VideoScreen> {
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
-      ..initialize().then((_) {
+    _controller = VideoPlayerController.network(
+      "http://localhost:3030/video/stream?filename=" + widget.filename,
+    )..initialize().then((_) {
         setState(() {
           _controller.play();
         });
@@ -29,7 +29,7 @@ class _VideoScreenState extends State<VideoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Video Player'),
+        title: Text('Replay ' + widget.filename),
       ),
       body: Center(
         child: _controller.value.isInitialized
@@ -66,7 +66,7 @@ class _VideoScreenState extends State<VideoScreen> {
 void main() {
   runApp(MaterialApp(
     home: VideoScreen(
-      videoUrl: 'YOUR_VIDEO_URL_HERE', // Replace with the actual video URL
+      filename: 'YOUR_VIDEO_URL_HERE', // Replace with the actual video URL
     ),
   ));
 }
