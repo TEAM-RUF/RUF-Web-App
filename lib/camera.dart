@@ -4,6 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
+import 'dart:math';
 
 // ignore: must_be_immutable
 class CameraApp extends StatelessWidget {
@@ -145,6 +146,14 @@ class _CameraViewState extends State<CameraView> {
     return val;
   }
 
+  String savedVidName = "N/A";
+  String generateRandomToken() {
+    final String currentDate = DateTime.now().toIso8601String();
+    final String randomToken = Random().nextInt(999999).toString();
+
+    return '$currentDate-$randomToken';
+  }
+
   @override
   void initState() {
     super.initState();
@@ -191,18 +200,20 @@ class _CameraViewState extends State<CameraView> {
                 ? null
                 : () async {
                     await controller!.startVideoRecording();
-                    await Future.delayed(Duration(seconds: 100));
+                    await Future.delayed(Duration(seconds: 10));
                     final file = await controller!.stopVideoRecording();
                     final bytes = await file.readAsBytes();
                     final uri = Uri.dataFromBytes(bytes,
-                        mimeType: 'video/webm;codecs=vp8');
+                        mimeType: 'video/mp4;codecs=vp8');
+
+                    savedVidName = generateRandomToken() + '.mp4';
 
                     final link = AnchorElement(href: uri.toString());
-                    link.download = 'recording.webm';
+                    link.download = savedVidName;
                     link.click();
                     link.remove();
                   },
-            child: const Text('Record 100 second video.'),
+            child: const Text('Record 10 second video.'),
           )
         ],
       ),
