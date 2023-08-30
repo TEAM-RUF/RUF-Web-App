@@ -6,6 +6,7 @@ import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'dart:math';
 import 'package:http/http.dart' as http;
+import 'dart:typed_data';
 
 // ignore: must_be_immutable
 class CameraApp extends StatelessWidget {
@@ -165,8 +166,7 @@ class _CameraViewState extends State<CameraView> {
       String userToken = generateRandomToken();
       savedVidName = userToken + '.mp4';
 
-      var uri = Uri.parse(
-          serverUrl + '/video/upload'); // Update with your backend endpoint
+      var uri = Uri.parse(serverUrl + '/video/upload');
       var request = http.MultipartRequest('POST', uri);
 
       // Add video file and other form fields
@@ -230,24 +230,33 @@ class _CameraViewState extends State<CameraView> {
                   height: 500,
                   child: AspectRatio(
                       aspectRatio: 4 / 3, child: CameraPreview(controller!)))),
-          ElevatedButton(
-            onPressed: controller == null
-                ? null
-                : () async {
-                    if (recording == false) {
-                      await controller!.startVideoRecording();
-                      setState(() {
-                        recording = true;
-                      });
-                    } else {
-                      final file = await controller!.stopVideoRecording();
-                      sendVideo(file);
-                      setState(() {
-                        recording = false;
-                      });
-                    }
-                  },
-            child: Text(recording ? 'Stop Recording' : 'Start Recording'),
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.white, // Set the background color to white
+              shape: BoxShape.circle, // Make the container a circle
+            ),
+            child: IconButton(
+              onPressed: controller == null
+                  ? null
+                  : () async {
+                      if (recording == false) {
+                        await controller!.startVideoRecording();
+                        setState(() {
+                          recording = true;
+                        });
+                      } else {
+                        final file = await controller!.stopVideoRecording();
+                        sendVideo(file);
+                        setState(() {
+                          recording = false;
+                        });
+                      }
+                    },
+              icon: Icon(
+                recording ? Icons.stop : Icons.fiber_manual_record,
+                color: Colors.red, // Set the icon color
+              ),
+            ),
           )
         ],
       ),
