@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 import 'package:chewie/chewie.dart';
 import 'dart:math';
+import 'package:http/http.dart' as http;
 
 // ignore: must_be_immutable
 class CameraApp extends StatelessWidget {
@@ -146,13 +147,47 @@ class _CameraViewState extends State<CameraView> {
     return val;
   }
 
+  // Send Video
+  // author : judemin
+  bool recording = false;
   String savedVidName = "N/A";
+  String serverUrl = "http://localhost:3030";
   String generateRandomToken() {
     final String currentDate = DateTime.now().toIso8601String();
     final String randomToken = Random().nextInt(999999).toString();
 
     return '$currentDate-$randomToken';
   }
+
+  void sendVideo(file) async {
+    try {
+      final bytes = await file.readAsBytes();
+      String userToken = generateRandomToken();
+      savedVidName = userToken + '.mp4';
+
+      var uri = Uri.parse(
+          serverUrl + '/video/upload'); // Update with your backend endpoint
+      var request = http.MultipartRequest('POST', uri);
+
+      // Add video file and other form fields
+      request.files.add(
+          http.MultipartFile.fromBytes('file', bytes, filename: savedVidName));
+      request.fields['title'] = savedVidName;
+      request.fields['description'] = 'Tablet test video';
+      request.fields['userToken'] = userToken;
+
+      var response = await request.send();
+      if (response.statusCode == 200) {
+        print('Video uploaded successfully');
+      } else {
+        print('Error uploading video');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+  }
+
+  //
 
   @override
   void initState() {
@@ -199,21 +234,20 @@ class _CameraViewState extends State<CameraView> {
             onPressed: controller == null
                 ? null
                 : () async {
-                    await controller!.startVideoRecording();
-                    await Future.delayed(Duration(seconds: 10));
-                    final file = await controller!.stopVideoRecording();
-                    final bytes = await file.readAsBytes();
-                    final uri = Uri.dataFromBytes(bytes,
-                        mimeType: 'video/mp4;codecs=vp8');
-
-                    savedVidName = generateRandomToken() + '.mp4';
-
-                    final link = AnchorElement(href: uri.toString());
-                    link.download = savedVidName;
-                    link.click();
-                    link.remove();
+                    if (recording == false) {
+                      await controller!.startVideoRecording();
+                      setState(() {
+                        recording = true;
+                      });
+                    } else {
+                      final file = await controller!.stopVideoRecording();
+                      sendVideo(file);
+                      setState(() {
+                        recording = false;
+                      });
+                    }
                   },
-            child: const Text('Record 10 second video.'),
+            child: Text(recording ? 'Stop Recording' : 'Start Recording'),
           )
         ],
       ),

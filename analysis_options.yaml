@@ -23,6 +23,7 @@ linter:
   # producing the lint.
 
   rules:
+    avoid_print: false
 
 analyzer:
   errors:
