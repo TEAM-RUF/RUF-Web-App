@@ -38,7 +38,6 @@ dependencies:
   flutter_webrtc: ^0.9.40
   chewie: ^1.7.0
   package_info_plus: ^4.1.0
-  material_icons: ^1.1.0
 
 dev_dependencies:
   flutter_test:

@@ -17,7 +17,7 @@ class _VideoScreenState extends State<VideoScreen> {
   void initState() {
     super.initState();
     _controller = VideoPlayerController.network(
-      "http://localhost:3030/video/stream?filename=" + widget.filename,
+      "http://16.16.50.155:3030/video/stream?filename=" + widget.filename,
     )..initialize().then((_) {
         setState(() {
           _controller.play();

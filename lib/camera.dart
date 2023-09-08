@@ -152,7 +152,7 @@ class _CameraViewState extends State<CameraView> {
   // author : judemin
   bool recording = false;
   String savedVidName = "2023-08-30T19:30:48.886-852694.mp4";
-  String serverUrl = "http://localhost:3030";
+  String serverUrl = "http://16.16.50.155:3030";
   String generateRandomToken() {
     final String currentDate = DateTime.now().toIso8601String();
     final String randomToken = Random().nextInt(999999).toString();
@@ -227,7 +227,7 @@ class _CameraViewState extends State<CameraView> {
               quarterTurns: 1,
               child: Container(
                   alignment: Alignment.centerLeft,
-                  height: 500,
+                  height: 400,
                   child: AspectRatio(
                       aspectRatio: 4 / 3, child: CameraPreview(controller!)))),
           Container(
