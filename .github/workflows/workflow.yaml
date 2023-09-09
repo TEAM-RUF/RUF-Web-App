@@ -1,0 +1,36 @@
+name: Flutter Web
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    name: Build Web
+    env:
+      my_secret: $
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'dev'
+      - run: flutter config --enable-web
+      - run: flutter pub get
+      - run: flutter build web --release
+        # 1. change path which exist lib/main.dart
+        working-directory: ./example_macos
+      - run:
+          # 2. change path to [existed lib/main.dart path]/build/web
+          cd RUF-Web-APP/build/web
+          git init
+           # 3. change your email
+          git config --global user.email judemin2087@naver.com
+          # 4. change your name
+          git config --global user.name judemin
+          git status
+          # 5. change your repository
+          git remote add origin https://github.com/gym-bot/RUF-Web-App.git
+          git checkout -b gh-pages
+          git add --all
+          git commit -m "[UPDATE] github action page updates"
+          git push origin gh-pages -f
